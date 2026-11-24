@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hakoni — a garden in a box for AI agents</title>
+<meta name="description" content="Hakoni explores how to hand someone one link and let their coding agent build a small, sandboxed work environment that already knows its job.">
+<link rel="icon" href="assets/hakoni-logo.svg" type="image/svg+xml">
+<style>
+  :root {
+    --indigo: #303C68;
+    --vermilion: #C65B46;
+    --paper: #FAF5EA;
+    --stone: #9296A5;
+    --ink: #262B3F;
+    --card: #FFFDF8;
+    --line: #E6DFCF;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 0 16px 64px; }
+  a { color: var(--indigo); text-decoration-color: var(--vermilion); text-underline-offset: 3px; }
+  a:hover { color: var(--vermilion); }
+  header.hero { text-align: center; padding: 48px 0 24px; }
+  header.hero img { width: min(260px, 70vw); height: auto; }
+  .tagline { font-size: 1.35rem; color: var(--indigo); margin: 8px 0 4px; }
+  .kanji { color: var(--stone); font-size: 0.95rem; margin: 0; }
+  h2 {
+    color: var(--indigo);
+    font-size: 1.3rem;
+    margin: 48px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--line);
+  }
+  h2::before { content: ""; display: inline-block; width: 10px; height: 10px; background: var(--vermilion); margin-right: 10px; vertical-align: middle; }
+  .lead { font-size: 1.1rem; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin: 16px 0; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .card h3 { margin: 0 0 4px; font-size: 1rem; color: var(--vermilion); }
+  .card p { margin: 0; font-size: 0.95rem; }
+  ol.path { padding-left: 1.4em; }
+  ol.path li { margin: 6px 0; }
+  ol.path li::marker { color: var(--vermilion); font-weight: 600; }
+  .note {
+    border-left: 3px solid var(--stone);
+    padding: 4px 14px;
+    color: #4A5068;
+    font-size: 0.95rem;
+    margin: 16px 0;
+  }
+  blockquote.question { margin: 20px 0; font-size: 1.2rem; color: var(--indigo); font-style: italic; text-align: center; }
+  footer { border-top: 1px solid var(--line); margin-top: 56px; padding-top: 16px; font-size: 0.9rem; color: #5A6078; }
+</style>
+</head>
+<body>
+<main>
+  <header class="hero">
+    <img src="assets/hakoni-logo.svg" alt="Hakoni logo: a miniature garden in a closable box">
+    <p class="tagline">A garden in a box for AI agents.</p>
+    <p class="kanji">From <em>hakoniwa</em> (箱庭), the Japanese miniature garden in a box.</p>
+  </header>
+
+  <p class="lead">Hakoni explores a simple idea: hand someone <strong>one link</strong>, let their general-purpose coding agent (Claude Code, Codex…) read it, and end up with a small, sandboxed work environment that already knows its job: its tools, its rules, its knowledge and its place in a shared project.</p>
+
+  <p class="note">Early exploration. Nothing is built yet: this page describes hypotheses being tested, not a product.</p>
+
+  <h2>Why</h2>
+  <p>Agents are becoming useful to people who are not developers, but handing one over is still hard. Today you share a prompt, a few instructions and a lot of manual setup. Hakoni asks what it would take to hand over a whole small work environment as easily as you send a file.</p>
+  <p>Two experiments started the idea. In the first, an onboarding Markdown file behind a Git link was enough for someone's coding agent to join a project: clone it, take its own branch and folder, prepare its environment, find the plan and the conventions. In the second, a sandbox container held everything a specialised task needed (tools, skills, rules, configuration), so that any agent connected to it over SSH could do the job from a plain-language request, with nothing installed on the agent's side.</p>
+  <p>Hakoni brings the two together.</p>
+
+  <h2>The idea in four parts</h2>
+  <div class="grid">
+    <div class="card"><h3>The seed</h3><p>An onboarding document behind a Git link: the mission, the prerequisites, how to join.</p></div>
+    <div class="card"><h3>The box</h3><p>A sandboxed container: the delivery unit, with its tools, skills, conventions and access policies.</p></div>
+    <div class="card"><h3>Git</h3><p>Carries the recipe, the shared knowledge, the contributions, the work log and the continuity between sessions.</p></div>
+    <div class="card"><h3>The agent</h3><p>Interchangeable. It installs the environment with the user's permission, then works inside it.</p></div>
+  </div>
+
+  <h2>From one link to a working garden</h2>
+  <p>The path being prototyped, not yet validated end to end:</p>
+  <ol class="path">
+    <li>The recipient gives the seed link to their coding agent.</li>
+    <li>The agent reads it, detects missing prerequisites, explains them and <strong>asks before installing</strong> anything.</li>
+    <li>It fetches the reviewed container recipe, builds and starts the box.</li>
+    <li>It connects to the box and continues the bootstrap inside the sandbox.</li>
+    <li>It sets up Git with the recipient's own identity, clones the project and joins its branch.</li>
+    <li>It works, logs what it did, and at each new session catches up on what changed.</li>
+  </ol>
+  <p class="note">The host bootstrap is a trust boundary: the seed is untrusted input until its provenance is checked, and an instruction in a repository never authorises leaving the sandbox on its own.</p>
+
+  <h2>A box with clear edges</h2>
+  <p>The container is the perimeter of the mission, not a security guarantee on its own. Hakoni aims for least privilege: explicit file access, allowed network destinations only, the user's own identity and secrets provided at run time, never baked into the image, and no Docker socket or privileged host access by default.</p>
+
+  <h2>After the spreadsheet?</h2>
+  <p>A lot of everyday business computing runs on spreadsheets and hand-made tools built outside any IT project. A spreadsheet bundles data, logic and practice in one transmissible file. A Hakoni could bundle instructions, skills, tools, conventions, access policies and a workspace in one transmissible link, driven in natural language, without a new central platform for each small use.</p>
+  <blockquote class="question">Can we finally kill Excel?</blockquote>
+  <p>The question is provocative on purpose, and still open.</p>
+
+  <h2>Hakoni builds Hakoni</h2>
+  <p>The first Hakoni project is Hakoni itself. The same seed link is given to Claude Code and to Codex, on two separate installs; each should reach an equivalent environment, make a contribution and resume a session. Every difficulty met along the way is a real product friction to fix.</p>
+
+  <footer>
+    <p>Hakoni is an open exploration. Source, vision and plan: <a href="https://github.com/mdussere/hakoni">github.com/mdussere/hakoni</a>. Apache 2.0.</p>
+  </footer>
+</main>
+</body>
+</html>
