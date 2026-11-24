@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[codz]
+.venv/
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+
+# Local only
+tmp/
+commits/
+results/
+.env
+.env.*
+*.pem
+*.key
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+
+# Private material (never committed)
+private/
