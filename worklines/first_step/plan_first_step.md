@@ -1,0 +1,151 @@
+---
+**Status**: 📋 Draft
+**Date**: 2026-11-24
+**Priority**: High
+**Maintained**: Yes
+---
+
+# From the vision to a first seed (workline `first_step`)
+
+## Overview
+
+Hakoni starts here. This workline turns the [vision](docs/0000_01_vision.md) into a first working **seed**: an onboarding Markdown file behind a Git link which, given to Claude Code or Codex, lets the agent build and start a sandboxed container, connect to it, join the Hakoni repository and contribute. Hakoni is its own first use case.
+
+**Done means:** from the same seed link, on two separate installs, Claude Code and Codex each reach an equivalent working environment, make a Git contribution and resume a session; the first security checks pass; the differences between clients are documented. Distributing a seed to other people is the next workline, not this one.
+
+## Workline directory layout
+
+- Plan (this file): `worklines/first_step/plan_first_step.md`
+- Produced docs: `worklines/first_step/docs/`
+- Scripts (if needed): `worklines/first_step/scripts/`
+- Tests: `test/first_step/`
+
+## Goals ✅
+
+- Fix the scope and success criteria of the first demonstrator.
+- Know the runtime facts before building: the sandbox runtime, the container engine, how each agent client connects to a container and discovers instructions and skills.
+- Write the seed v0 and the container recipe v0 for Hakoni itself.
+- Run the dogfooding test with two agent clients and record what happens.
+- Run the first security checks.
+
+## Non-goals ❌
+
+- No distribution to other people, and no business use case, before the security checks pass.
+- No architecture, file name or runtime fixed in advance: each is decided in its step, with evidence.
+- No publication of private experience: the vision stays generic (see `AGENTS.md`, "Public repository").
+- No other logo variant in the repository: only the chosen logo (`site/assets/hakoni-logo.svg`).
+- No talk or meetup preparation.
+
+## Key decisions / assumptions
+
+- 2026-11-24 (Michaël): the project is called **Hakoni**; repository `mdussere/hakoni`, public, Apache 2.0.
+- 2026-11-24 (Michaël): English for the repository; worklines and skills follow the usual conventions (`workline`, green light `🟩 go Step N`, `docs/LOGBOOK.md`).
+- 2026-11-24 (Michaël): the logo is the closable-box logo in the **contemporary Japan** palette (indigo, vermilion, off-white). It goes into the repository (`site/assets/hakoni-logo.svg`) and the README. Its inspiration photo is not attributed yet (possibly Kurumi Garden, unconfirmed): see Risks.
+- 2026-11-24 (Michaël): a GitHub Pages site lives in `site/`, deployed by a GitHub Actions workflow; it starts with one introduction page to the concept.
+- 2026-11-24 (Michaël): the first workline is `first_step`, with the vision as `docs/0000_01_vision.md`.
+- 2026-11-24 (Michaël): the first coding agent is **Claude Code alone, locally** in VS Code, working **directly on `main`**, talking to Michaël **in the console only**; its first mission is **Step 1**. Onboarding: `docs/0000_02_onboarding.md`. Codex comes later (Step 5 at the latest).
+- Assumption: OpenShell is the first sandbox runtime to evaluate, from the author's experiments; Docker or an equivalent as the container engine; SSH as the first connection path. All three are checked in Step 2, not assumed.
+- Assumption: skills live once in `skills/`, linked from `.claude/skills/` (Claude Code) and `.agents/skills/` (Codex). Whether Codex discovers them there is checked in Step 2.
+
+## Risks / constraints
+
+- **The host bootstrap is a trust boundary.** Installing prerequisites and building a container act outside the sandbox. Mitigation: the seed asks before every installation or privileged command, and points to reviewed, versioned recipes only.
+- **Client differences.** Claude Code and Codex may differ on skill discovery, SSH, permissions and approvals. Mitigation: measure them in Step 2 and Step 5; do not promise equivalence before the test.
+- **Untrusted input.** The seed itself is fetched content. Mitigation: the seed tells the agent what it will do and asks before acting; no "curl | sh".
+- **Public repository.** Mitigation: the public check in `commit-prep`; fictional examples only.
+- **Logo provenance.** The logo was drawn with an AI assistant from a photo of a miniature garden whose author is not confirmed. Mitigation: no copy of the photo in the repository; confirm the inspiration and that the logo is not a derivative before any wider use (talk, branding).
+- **The runtime may not fit.** If OpenShell does not suit the use, Step 2 records why and proposes an alternative before Step 4.
+
+## 🚦 Green light protocol
+
+- Default: planning and docs only until Michaël explicitly says **"🟩 go Step N"**.
+- If the scope changes materially, update this plan before proceeding, with a logbook entry.
+
+## Plan steps (no execution until green light)
+
+### Step 0 — Repository bootstrap
+**Status**: ✅ Done (2026-11-24)
+- [x] 0.1 `AGENTS.md` (instructions for every client), `CLAUDE.md` pointing to it, `README.md`.
+- [x] 0.2 Skills in `skills/` (`workline`, `commit-prep`, `shared-chat-discussion`, `clean-verbatim`), linked from `.claude/skills/` and `.agents/skills/`.
+- [x] 0.3 `pyproject.toml` with uv (Playwright and pytest in dev), `.gitignore`, `docs/LOGBOOK.md`.
+- [x] 0.4 This workline and the [vision](docs/0000_01_vision.md), anonymised for a public repository.
+- [x] 0.5 The founding discussion captured and cleaned: [docs/0000_03_hakoni-founding-discussion.md](docs/0000_03_hakoni-founding-discussion.md), translated and anonymised. The raw export and the logo SVGs stay in `worklines/first_step/private/`, ignored by Git.
+- [x] 0.6 The logo (contemporary Japan palette) in the README, and a GitHub Pages site: `site/index.html` (introduction to the concept) and `.github/workflows/pages.yml`.
+
+### Step 1 — Frame the first demonstrator
+**Status**: ⏳ Pending
+- [ ] 1.1 Michaël reviews the vision: corrections, what to keep, what to drop.
+- [ ] 1.2 Write the demonstrator's scope: what the seed must achieve, for whom, on which machines (Michaël's workstations), with which agent clients and versions.
+- [ ] 1.3 Turn the success criteria (vision § 7) into a checklist of observable tests, each with its expected evidence.
+- [ ] 1.4 Decide the vocabulary to use in the repository (seed, plant, grow, or other).
+- **Acceptance:** `docs/0101_01_demonstrator-scope.md` approved by Michaël.
+
+### Step 2 — Runtime survey
+**Status**: ⏳ Pending
+- [ ] 2.1 OpenShell: what it is, how it is installed, what its policies control (files, network, commands), how an agent connects to it. From official documentation and a local trial, with sources.
+- [ ] 2.2 Container engine prerequisites on Michaël's machines (Docker or equivalent, rights, rootless options).
+- [ ] 2.3 How Claude Code and Codex each: discover instructions (`AGENTS.md`, `CLAUDE.md`) and skills (`.claude/skills/`, `.agents/skills/`); connect to a remote environment over SSH; ask for approvals.
+- [ ] 2.4 Recommendation for the v0 runtime and connection path, with the alternatives considered.
+- **Acceptance:** `docs/0201_01_runtime-survey.md` with sources and the commands actually run; Michaël chooses the v0 runtime.
+
+### Step 3 — Seed v0
+**Status**: ⏳ Pending
+- [ ] 3.1 Write the seed: mission, prerequisites check, every action announced before it runs, approvals requested, no blind remote execution.
+- [ ] 3.2 Join flow: clone, branch per contributor or agent, working folder, where the plan is, how to log work.
+- [ ] 3.3 Continuity: what the agent does at each restart (fetch, review changes, resume).
+- [ ] 3.4 A review of the seed as untrusted input: what could a malicious or modified seed make an agent do?
+- **Acceptance:** the seed file in the repository; a dry read by each client, which summarises what it would do, matches the intent.
+
+### Step 4 — Container recipe v0
+**Status**: ⏳ Pending
+- [ ] 4.1 Recipe (for example a Dockerfile) with the minimal tools for working on Hakoni: Git, Python, uv.
+- [ ] 4.2 Sandbox policy v0: allowed files and mounts, allowed network destinations, no Docker socket, resource limits.
+- [ ] 4.3 Identity and secrets: the user's own Git identity and credentials, provided at run time, never in the image or the repository.
+- [ ] 4.4 Workspace layout: what is rebuildable, what persists, what is shared through Git.
+- **Acceptance:** the container builds and starts on one machine; an agent connects and runs `uv run pytest` inside it; tests in `test/first_step/`.
+
+### Step 5 — Dogfooding test: Hakoni builds Hakoni
+**Status**: ⏳ Pending
+- [ ] 5.1 Claude Code receives the seed link on install A: environment, task, Git contribution, session resumed.
+- [ ] 5.2 Codex receives the same link on install B: same checklist.
+- [ ] 5.3 Record each manual step, approval and failure, and the differences between clients.
+- [ ] 5.4 Fix the seed or the recipe, and rerun until both clients pass, or record why one cannot.
+- **Acceptance:** `docs/0501_01_dogfooding-report.md` with the evidence for each criterion of Step 1.
+
+### Step 6 — First security checks
+**Status**: ⏳ Pending
+- [ ] 6.1 Out-of-policy file access, network call and command are refused (one test each).
+- [ ] 6.2 No secret in the image, the repository or the logs.
+- [ ] 6.3 An instruction added to the seed or a skill cannot raise permissions or leave the sandbox.
+- **Acceptance:** repeatable tests in `test/first_step/` and `docs/0601_01_security-checks.md`; open risks listed for the next workline.
+
+---
+
+## Progress tracking ✅
+
+- ✅ Step 0 — Repository bootstrap
+- ⏳ Step 1 — Frame the first demonstrator
+- ⏳ Step 2 — Runtime survey
+- ⏳ Step 3 — Seed v0
+- ⏳ Step 4 — Container recipe v0
+- ⏳ Step 5 — Dogfooding test: Hakoni builds Hakoni
+- ⏳ Step 6 — First security checks
+
+---
+
+## Time log
+
+| Timestamp (`date`) | Update |
+|---|---|
+| Tue 24 Nov 2026 | Step 0.6: logo chosen by Michaël (contemporary Japan) and added to the README; `site/` with an introduction page and a Pages deployment workflow. |
+| Tue 24 Nov 2026 | Step 0.5: founding ChatGPT discussion captured with the scraper (329 messages), cut to the Hakoni part, cleaned into `docs/0000_03_hakoni-founding-discussion.md`; raw export and logo SVGs kept private (`private/` in `.gitignore`). |
+| Tue 24 Nov 2026 | Workline created. Step 0 done: repository conventions, skills, uv, logbook; vision written from Michaël's notes, anonymised. Steps 1–6 drafted, waiting for review. |
+
+---
+
+## Workline artifacts
+
+- [docs/0000_01_vision.md](docs/0000_01_vision.md): what Hakoni tries to show, where the idea comes from, success criteria and open questions.
+- [docs/0000_03_hakoni-founding-discussion.md](docs/0000_03_hakoni-founding-discussion.md): how the idea and the name came about (Agent X → Seed → Hakoni), Michaël's decisions versus the assistant's proposals.
+- [site/index.html](../../site/index.html): public introduction page to the concept, published with GitHub Pages.
+- [docs/0000_02_onboarding.md](docs/0000_02_onboarding.md): onboarding for the coding agent (Claude Code, local, on `main`, console only); first mission: Step 1. Also the first draft of a seed.
