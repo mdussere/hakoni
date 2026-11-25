@@ -142,8 +142,57 @@ Everything else is denied, including `apt` inside the box and Playwright's brows
 ## Claude Code inside the box
 
 - **Running a session:** the Claude desktop app's SSH connection, with host `openshell-hakoni-seed0.default` and folder `/sandbox/hakoni`, runs a session in the box in remote control. It needed no extra network host beyond the policy.
-- **Not observed by the host agent:** whether that session logged in through an interactive login inside the box, or with credentials handled by the desktop app. Likewise, `claude` started from a plain terminal in the box, with its interactive login, was not tested. Both stay open for 2.4.
+- **Not observed by the host agent:** whether that session logged in through an interactive login inside the box, or with credentials handled by the desktop app. The session in the box answered the first question afterwards (see "Seen from inside the box"). `claude` started from a plain terminal in the box, with its interactive login, was still not tested.
 - **No API key was set up.**
+
+## Seen from inside the box
+
+Added on 2026-11-25 by the Claude Code session running in the box (desktop app, SSH connection `hakoni-seed0`), after Michaël asked it to look around. Only read-only commands were run; values that identify a person or an account are left out on purpose.
+
+### Isolation
+
+- The session runs as `sandbox` (UID/GID 1000), in a rootless Podman container whose PID 1 is `openshell-sandbox --bootstrap …`.
+- No `sudo`. `CapEff` and `CapBnd` are `0`, `NoNewPrivs` is `1`, and seccomp is in filter mode.
+- `/sandbox`, `/home/sandbox` and `/tmp` can be written (`touch` then `rm`), as the policy says. `/etc` and `/usr/local` cannot. `/run/secrets`, `/.openshell` and `/.openshell/channel` cannot be listed.
+- There is no Docker or Podman socket, and nothing from the host user's home is mounted. Only the workspace volume (`/sandbox`) and the supervisor's own files are mounted.
+- The box sees the host's 4 CPUs and 7.2 GiB of RAM, and 157 GiB free on the workspace volume. No resource limit was set.
+
+### Network, probed from the box
+
+`curl` to each URL, 5-second timeout. The results match the policy above.
+
+| Reached (HTTP status) | Refused at connect |
+|---|---|
+| `github.com` 200, `api.github.com` 200, `raw.githubusercontent.com` 301 | `example.com`, `www.google.com`, `chatgpt.com` |
+| `pypi.org` 200, `files.pythonhosted.org` 404 | `registry.npmjs.org`, `storage.googleapis.com` |
+| `api.anthropic.com` 404, `claude.ai` 403 | `http://github.com` (port 80) |
+
+`git ls-remote origin` and `git pull --ff-only` from `/sandbox/hakoni` both work over HTTPS.
+
+### How the desktop-app session runs and authenticates
+
+- **The desktop app brings its own Claude Code.** Over SSH it installs a server and its own CLI under `/sandbox/.claude/remote/` (about 266 MB): a `server` process in `--serve` and `--bridge` modes, and `ccd-cli/2.1.299-…`, which runs the session. The image's Claude Code 2.1.325 (`/home/sandbox/.local/bin/claude`) is not used by this session.
+- **No login inside the box.** There is no `.credentials.json` and no API key in the environment. The session's environment names a host-side session and says the host refreshes the authentication (`CLAUDE_CODE_SDK_HAS_HOST_AUTH_REFRESH`, `CLAUDE_CODE_ENTRYPOINT=claude-desktop`, `CLAUDE_SSH_DAEMON_CHILD=1`), and `ANTHROPIC_BASE_URL` points to `https://api.anthropic.com`. So the credentials are handled by the desktop app on the host and passed to the session; they are not stored in the workspace. How they travel was not inspected.
+- **`HOME` is `/sandbox`, not `/home/sandbox`**, for the server and the session (`/etc/passwd` says `/home/sandbox`; which component sets it was not found). So the session's Claude Code state lives in the workspace: `/sandbox/.claude/`, `/sandbox/.claude.json` and `/sandbox/.cache/`. `/sandbox/.claude.json` holds the account profile (name, email, organisation). It is outside the Git clone and is not committed, but anything that copies or shares the workspace volume carries it.
+
+### Instructions and skills (input for 2.4)
+
+For Claude Code, through the desktop app, with `/sandbox/hakoni` as the folder:
+
+- `CLAUDE.md` is loaded and its `@AGENTS.md` import is followed: the session receives `AGENTS.md` in full as project instructions.
+- The four repository skills (`workline`, `commit-prep`, `shared-chat-discussion`, `clean-verbatim`) are discovered through the `.claude/skills/` links, next to the desktop app's own skills.
+- Codex was not tried in the box; whether it finds `.agents/skills/` there stays open.
+
+### Tooling and Git
+
+- git 2.43.0, uv 0.13.10, Python 3.12.3, curl 8.5.0. No `node`, `npm`, `gh`, `docker` or `podman`.
+- At first there was no Git identity, no `~/.ssh` and no credential helper: the box could pull but not push.
+- Then, at Michaël's request, the session gave the box a push path:
+  - `gh` 2.105.0 was installed without `sudo`: the official `linux_amd64` tarball from the GitHub release, checked against the release's sha256 file, then copied to `~/.local/bin`;
+  - Michaël logged in interactively with `gh auth login --web` (device code entered in his own browser), and `gh auth setup-git` made `gh` Git's credential helper for github.com;
+  - the Git identity was set in the box's `~/.gitconfig`.
+- **This puts a secret in the box:** an OAuth token, stored in plain text in `/sandbox/.config/gh/hosts.yml` (mode 600), so in the workspace volume. Its scopes are `repo`, `read:org` and `gist`, and the account is admin of the repository, so the box can write to every repository of that account. Revoke it with `gh auth logout` in the box or from GitHub's authorised applications. For v0, prefer a fine-grained token limited to the one repository and to contents and pull requests.
+- `uv run pytest` still collects 0 tests: the repository has no `test/` folder yet.
 
 ## Where seed 0 was wrong, unclear or missing something
 
@@ -202,6 +251,8 @@ No group membership or system service was changed.
 - **Open checks:**
   - workspace persistence across `stop` and `start` with Podman;
   - Claude Code's interactive login from a terminal inside the box;
-  - how the desktop-app session authenticates;
-  - where Claude Code finds `AGENTS.md`, `CLAUDE.md` and the skills inside the box (2.4).
+  - how the desktop app passes its credentials to the session (the session itself holds none; see "Seen from inside the box");
+  - Codex's discovery of `AGENTS.md` and `.agents/skills/` inside the box (2.4). Claude Code's is answered in "Seen from inside the box";
+  - whether `HOME=/sandbox` for desktop-app sessions is wanted: it puts the account profile in the workspace volume;
+  - Git identity and a push path for contributions from the box (Step 5).
 - **Seed v0 wording:** see the table above. In particular: Podman as the default engine, the `localhost/` prefix, `/sandbox` as the workspace, the mandatory `binaries`, the include file written by hand, and the telemetry question asked before the install.

@@ -143,6 +143,7 @@ Hakoni starts here. This workline turns the [vision](docs/0000_01_vision.md) int
 
 | Timestamp (`date`) | Update |
 |---|---|
+| Wed 25 Nov 2026 | Report completed from inside the box by its desktop-app session: isolation, network probe, how the session runs and authenticates (host-side credentials, `HOME=/sandbox`), and Claude Code's discovery of instructions and skills (input for 2.4; Codex not tried). |
 | Wed 25 Nov 2026 | Seed 0 run by the local Claude Code (2.2): OpenShell 0.1.10 with rootless Podman, box reachable over SSH, Hakoni cloned inside. Experience report written (2.3). |
 | Wed 25 Nov 2026 | Step 2 reshaped into a full-scale trial: seed 0 written (`docs/0201_01_seed-0.md`), from OpenShell's documentation v0.1.10. Waiting for Michaël's commit and run. |
 | Tue 24 Nov 2026 | Step 1 done: Michaël approved the demonstrator scope, with its three proposals (Codex as the next run, a `Hakoni-Instance` commit trailer as proof of origin, essence/instance/persistence kept as vision terms). "Done means" updated. |

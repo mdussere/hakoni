@@ -2,6 +2,14 @@
 
 ## 2026-11-25
 
+- **Seed 0 report completed from inside the box** (workline `first_step`, Steps 2.3 and 2.4). The Claude Code session running in `hakoni-seed0` (desktop app over SSH) added "Seen from inside the box" to [0202_01_seed-0-experience-report.md](../worklines/first_step/docs/0202_01_seed-0-experience-report.md), from read-only commands.
+  - Isolation holds: user `sandbox`, no `sudo`, no capabilities, `NoNewPrivs`, seccomp; no container socket and no host home mount. `/sandbox`, `/home/sandbox` and `/tmp` are writable, `/etc` and `/usr/local` are not.
+  - Network probe matches the policy: GitHub, PyPI and Anthropic hosts reached over HTTPS; other hosts and plain HTTP refused.
+  - The desktop app installs its own server and Claude Code CLI (2.1.299) in the box and keeps the credentials on the host: no login and no key inside the box. Its session runs with `HOME=/sandbox`, so its Claude Code state, account profile included, lives in the workspace volume.
+  - Claude Code in the box loads `CLAUDE.md` → `AGENTS.md` and discovers the four repository skills through `.claude/skills/`. Codex not tried.
+  - The box could pull (`git pull --ff-only` to `93c4f81`) but not push. Michaël then logged in with `gh` (2.105.0, release tarball checked by sha256, device-code login in his browser): first secret in the box, a `repo`-scoped OAuth token in `/sandbox/.config/gh/`. A fine-grained, single-repository token is the v0 candidate.
+  - Tests: `uv run pytest` collects 0 tests (no `test/` folder yet).
+
 - **Seed 0 run** (workline `first_step`, Steps 2.2 and 2.3). The local Claude Code, in the Claude desktop app, followed seed 0 in about 30 minutes. Report: [0202_01_seed-0-experience-report.md](../worklines/first_step/docs/0202_01_seed-0-experience-report.md).
   - What worked:
     - OpenShell 0.1.10 runs on rootless Podman 5.7, with no Docker and no root-equivalent group.
