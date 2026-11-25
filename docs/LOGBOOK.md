@@ -2,6 +2,21 @@
 
 ## 2026-11-25
 
+- **Seed 0 run** (workline `first_step`, Steps 2.2 and 2.3). The local Claude Code, in the Claude desktop app, followed seed 0 in about 30 minutes. Report: [0202_01_seed-0-experience-report.md](../worklines/first_step/docs/0202_01_seed-0-experience-report.md).
+  - What worked:
+    - OpenShell 0.1.10 runs on rootless Podman 5.7, with no Docker and no root-equivalent group.
+    - `ssh openshell-hakoni-seed0.default` opens a shell in the box, through the gateway's `ssh-proxy`.
+    - Hakoni is cloned in `/sandbox/hakoni`.
+    - A session from the Claude desktop app works in the box over SSH.
+  - What did not:
+    - The box is not fully open: OpenShell has no "allow all" policy, so the trial uses an explicit HTTPS host list with any binary.
+    - Telemetry stayed on, because the question went unanswered before the install.
+  - Still to check:
+    - Claude Code's interactive login from a terminal inside the box;
+    - workspace persistence across `stop`/`start` with Podman;
+    - instruction and skill discovery in the box (2.4).
+  - Tests: `uv run pytest` in the box collected 0 tests (exit code 5), as expected while the repository has no tests.
+
 - **Step 2 reshaped: seed 0, a full-scale trial** (workline `first_step`). Michaël chose to test the runtime by doing, rather than by a paper survey: [0201_01_seed-0.md](../worklines/first_step/docs/0201_01_seed-0.md) is a trial seed for the local Claude Code.
   - The seed asks for approval before every install. It installs a container engine and OpenShell, writes and builds a minimal image, and creates the box `hakoni-seed0`. It prepares the SSH access, clones Hakoni over HTTPS inside the box, then summarises the run in the conversation. It commits nothing; the experience report is written afterwards, with Michaël.
   - Temporary choices for this trial (Michaël): the box is fully open to the Internet, holds no keys, and Claude Code inside it logs in interactively. They are recorded in the plan as exceptions to the default sandbox rules.

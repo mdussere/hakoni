@@ -86,10 +86,10 @@ Hakoni starts here. This workline turns the [vision](docs/0000_01_vision.md) int
 - **Acceptance:** `docs/0101_01_demonstrator-scope.md` approved by Michaël.
 
 ### Step 2 — Seed 0: a full-scale trial of the runtime
-**Status**: ⏳ Pending
+**Status**: 🧪 In progress
 - [x] 2.1 Write seed 0, [docs/0201_01_seed-0.md](docs/0201_01_seed-0.md). From the host, the local Claude Code installs the prerequisites with Michaël's approval, builds a minimal image and creates an OpenShell box open to the Internet. It then prepares the SSH access and clones Hakoni over HTTPS inside the box. No keys or tokens go into the box: Claude Code inside it logs in interactively.
-- [ ] 2.2 Michaël commits and pushes seed 0, then gives its link to a fresh local Claude Code session.
-- [ ] 2.3 Experience report, `docs/0202_01_seed-0-experience-report.md`, written afterwards with Michaël from the agent's end-of-run summary: commands, approvals, failures, and the OpenShell facts observed against its documentation (install, container engine, policy, SSH, login inside the box). The host agent commits nothing.
+- [x] 2.2 Michaël commits and pushes seed 0, then gives its link to a fresh local Claude Code session.
+- [x] 2.3 Experience report, [docs/0202_01_seed-0-experience-report.md](docs/0202_01_seed-0-experience-report.md), written afterwards with Michaël from the agent's end-of-run summary: commands, approvals, failures, and the OpenShell facts observed against its documentation (install, container engine, policy, SSH, login inside the box). The host agent commits nothing.
 - [ ] 2.4 From the trial: how Claude Code finds instructions and skills inside the box, and what is left to check for Codex.
 - [ ] 2.5 Recommendation for the v0 runtime and connection path, with the alternatives considered.
 - **Acceptance:** from seed 0 alone, `ssh <box alias>` from the host opens a shell in the box, Hakoni is cloned there, and Claude Code runs logged in inside it; the experience report is written; Michaël chooses the v0 runtime.
@@ -131,7 +131,7 @@ Hakoni starts here. This workline turns the [vision](docs/0000_01_vision.md) int
 
 - ✅ Step 0 — Repository bootstrap
 - ✅ Step 1 — Frame the first demonstrator
-- ⏳ Step 2 — Seed 0: a full-scale trial of the runtime
+- 🧪 Step 2 — Seed 0: a full-scale trial of the runtime
 - ⏳ Step 3 — Seed v0
 - ⏳ Step 4 — Container recipe v0
 - ⏳ Step 5 — Dogfooding test: Hakoni builds Hakoni
@@ -143,6 +143,7 @@ Hakoni starts here. This workline turns the [vision](docs/0000_01_vision.md) int
 
 | Timestamp (`date`) | Update |
 |---|---|
+| Wed 25 Nov 2026 | Seed 0 run by the local Claude Code (2.2): OpenShell 0.1.10 with rootless Podman, box reachable over SSH, Hakoni cloned inside. Experience report written (2.3). |
 | Wed 25 Nov 2026 | Step 2 reshaped into a full-scale trial: seed 0 written (`docs/0201_01_seed-0.md`), from OpenShell's documentation v0.1.10. Waiting for Michaël's commit and run. |
 | Tue 24 Nov 2026 | Step 1 done: Michaël approved the demonstrator scope, with its three proposals (Codex as the next run, a `Hakoni-Instance` commit trailer as proof of origin, essence/instance/persistence kept as vision terms). "Done means" updated. |
 | Tue 24 Nov 2026 | Step 1: 1.1 done (vision reviewed by Michaël). Demonstrator scope drafted in `docs/0101_01_demonstrator-scope.md` (1.2 to 1.4). |
@@ -158,5 +159,6 @@ Hakoni starts here. This workline turns the [vision](docs/0000_01_vision.md) int
 - [docs/0000_03_hakoni-founding-discussion.md](docs/0000_03_hakoni-founding-discussion.md): how the idea and the name came about (Agent X → Seed → Hakoni), Michaël's decisions versus the assistant's proposals.
 - [site/index.html](../../site/index.html): public introduction page to the concept, published with GitHub Pages.
 - [docs/0101_01_demonstrator-scope.md](docs/0101_01_demonstrator-scope.md): what the first demonstrator proves, where, with which client; tests T1–T9 with their evidence; vocabulary. Approved.
+- [docs/0202_01_seed-0-experience-report.md](docs/0202_01_seed-0-experience-report.md): what happened when seed 0 ran, OpenShell facts against its docs, what the seed v0 should change.
 - [docs/0201_01_seed-0.md](docs/0201_01_seed-0.md): trial seed for the local Claude Code: install OpenShell, create an open box, prepare SSH, clone Hakoni inside.
 - [docs/0000_02_onboarding.md](docs/0000_02_onboarding.md): onboarding for the coding agent (Claude Code, local, on `main`, console only); first mission: Step 1. Also the first draft of a seed.
