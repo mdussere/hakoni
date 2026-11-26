@@ -134,3 +134,70 @@ External source pages and product claims can change; follow the official release
 **Entire signals an important industrial shift:** Git-based development is accumulating agent provenance, searchable intent and persistent context. Hakoni has a related but distinct product thesis: **a small, distributable, sandboxed agentic environment that starts from a single link**.
 
 The most promising intersection is an optional **provenance and searchable memory layer** that helps agents resume and collaborate while preserving Hakoni's separate, explicit trust boundary. Evaluate such a layer empirically; do not conflate it with the box itself.
+
+
+## 8. Individual developer access, commercial model, and coding-agent integrations (2026-11-26 follow-up)
+
+This section records the follow-up discussion about using Entire as an **independent developer**, without changing the Hakoni project architecture. Commercial terms and CLI commands are time-sensitive: verify them against the linked official material before a real installation.
+
+### Early-access pricing and account options
+
+- Entire presents the **CLI** as an open-source, locally usable entry point; installing and trying it does not require moving a repository from GitHub to Entire's hosted forge.
+- At the time of this discussion, Entire advertised an **early-access free offering** for its platform features such as Git hosting, checkpoint storage, Continuous Memory and Agentic Search. **Free during early access is not a permanent pricing guarantee.** Some advanced/hosted features may require signup or service availability.
+- Distinguish **Entire's platform and session infrastructure** from **LLM inference executed/billed through Entire**. Hosted agent inference can be metered by tokens, independently of the user's existing Claude Code or Codex subscription.
+- Promotional credits, payment-card verification, quotas, free-tier limits, data-retention restrictions and future commercial tiers should be checked on the official pricing and terms pages at trial time. **Do not assume a permanent zero-cost brain for an unrestricted corpus.**
+- A solo developer can evaluate the CLI using an existing Git repository, but should not conflate local CLI support with access to every hosted memory/search feature.
+
+**Pricing reference:** https://entire.com/pricing  
+**Product:** https://entire.com/  
+**CLI source / usage and releases:** https://github.com/entireio/cli
+
+### Claude Code and OpenAI Codex CLI integration
+
+Both **Claude Code** and **Codex CLI** are named as supported integration targets for the Entire CLI. The general mechanism is agent-specific session **hooks/adapters** coupled with Git checkpoint provenance. This is different from transferring a live conversation between vendors: the actual interoperable content and resume behavior must be tested.
+
+Capabilities to inspect in both clients:
+
+| Concern | What to verify |
+| --- | --- |
+| Onboarding | Whether `entire enable` detects both agents and writes per-agent hooks without altering unrelated repository policies. |
+| Session capture | Which prompts, tool events, files and summaries are actually captured; what is omitted. |
+| Git attribution | Whether checkpoints can be traced to commits and recovered after checkout, rebase and merge. |
+| Cross-agent continuity | Whether Codex can retrieve a Claude Code session's **relevant evidence**, and vice versa, rather than merely seeing a summary or unrelated index. |
+| Search / brain | Which search commands require hosted indexing, account access or extra components. |
+| Data safety | Whether capture remains local, which references/remotes are pushed, and how to disable or redirect session synchronization. |
+| Client compatibility | Current supported versions of Codex and Claude Code, including desktop/remote-SSH environments. |
+
+### Suggested commands — inspect official help before executing
+
+The previously discussed Mac starting point is:
+
+```bash
+brew install --cask entireio/tap/entire
+cd /path/to/disposable-private-test-repository
+entire enable
+entire status
+```
+
+Checkpoint-related CLI actions discussed as examples include `entire checkpoint list`, `entire checkpoint explain <id>`, `entire session resume <branch>`, and `entire search`. **Treat these as commands to validate against `entire --help` and the installed release, not a tested runbook.** CLI syntax evolves.
+
+A command discussed for preventing Git session synchronization during local experiments was:
+
+```bash
+entire configure --local --skip-push-sessions
+```
+
+**Do not rely on that flag as a security guarantee without checking the current CLI help and inspecting the resulting Git references, config and network behavior.** Keep the first experiments on fictional data and a disposable private repository; do not start with Hakoni's public repository.
+
+### Practical recommendation for the Hakoni development agent
+
+1. **Read only:** compare Entire's documented data structures, checkpoint storage and current CLI license with Hakoni's workline and logbook conventions.
+2. **Isolated local trial:** use a disposable private Git repository with synthetic prompts; install the CLI and enable one agent at a time.
+3. **Cross-client hand-off:** run a short, non-sensitive task in Claude Code and attempt to resume or retrieve its relevant history from Codex; repeat in reverse.
+4. **Inspect persistence and cost:** list Git refs, push settings, files written and outbound requests; determine what requires an Entire account, hosted Brain/Search, a paid model or credits.
+5. **Evaluate fit, not adoption by default:** compare useful recovered context, latency, tokens and setup complexity with plain Hakoni workline docs and Git history.
+6. **Feed findings into Hakoni's planning process:** preserve the existing sandbox boundary and respect the repository's workline green-light protocol before implementing anything.
+
+**Guiding hypothesis:** Entire's project-wide “brain” aligns closely with the desire for a reusable, cross-session project memory. The specific question for Hakoni is whether that brain can be a **replaceable optional service**, usable across both Claude Code and Codex without compromising the one-link seed or leaking private execution history.
+
+**Further references:** https://github.com/entireio/cli · https://entire.com/pricing · https://entire.com/blog · https://docs.entire.com/
